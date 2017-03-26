@@ -1,6 +1,6 @@
 {
     "name": "dascentral/hfrl",
-    "description": "",
+    "description": "A release utility for projects that leverage HubFlow and package.json for version management.",
     "keywords": [ "hubflow", "release", "version", "versioning" ],
     "license": "MIT",
     "authors": [
