@@ -54,23 +54,36 @@ class BumpCommand extends Command
     {
         $type = ($input->getArgument('type')) ? strtolower($input->getArgument('type')) : 'patch';
 
-        // Confirm that the "package.json" file exists
-        if (!$this->packageJson->contents()) {
-            $output->writeln("\n" . '<error>No package.json in current directory.</error>' . "\n");
-            exit(1);
-        }
-
-        // Track the current version for script output
-        if (!$initial_version = $this->packageJson->version()) {
-            $output->writeln("\n" . '<error>No version information found within the package.json.</error>' . "\n");
-            exit(1);
-        }
+        // Get the current application version
+        $initial_version = $this->getCurrentVersion();
 
         // Bump the application version
         $this->packageJson->bump($type);
 
         // Share output with the user
         $this->outputResult($output, $initial_version);
+    }
+
+    /**
+     * Determine the current version of the "package.json".
+     *
+     * @return void
+     */
+    protected function getCurrentVersion()
+    {
+        // Confirm that the "package.json" file exists
+        if (!$this->packageJson->contents()) {
+            $output->writeln("\n" . '<error>No package.json in current directory.</error>' . "\n");
+            exit(1);
+        }
+
+        // Confirm version information exists within the "package.json"
+        if (!$initial_version = $this->packageJson->version()) {
+            $output->writeln("\n" . '<error>No version information found within the package.json.</error>' . "\n");
+            exit(1);
+        }
+
+        return $initial_version;
     }
 
     /**
