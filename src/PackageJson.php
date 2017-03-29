@@ -1,6 +1,6 @@
 <?php
 
-namespace Dascentral\Bump\Console;
+namespace Dascentral\Rl\Console;
 
 class PackageJson
 {
