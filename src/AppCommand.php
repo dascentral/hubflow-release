@@ -72,13 +72,17 @@ echo "$version\n";
 die();
 
         // Start the HubFlow release
+        // git hf release start $version
 
-        // Bump the application version
-        $this->packageJson->bump($type);
+        // Save the new application version
+        $this->packageJson->saveVersion($version);
 
         // Commit the change
+        // git add package.json
+        // git commit -m "Version $version"
 
         // Finish the HubFlow release
+        // git hf release finish $version
 
         // Share output with the user
         $this->outputResult($output, $initial_version);
