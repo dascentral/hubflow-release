@@ -71,19 +71,16 @@ class ReleaseCommand extends Command
         $version = $this->versionManager->bump($initial_version, $type);
 
         // Start the HubFlow release
-        //$this->startRelease($version);
+        $this->startRelease($version);
 
         // Save the new application version
         $this->packageJson->saveVersion($version);
 
         // Commit the change
-        //$this->commitChange($version);
-        // git add package.json
-        // git commit -m "Version $version"
+        $this->commitChange($version);
 
         // Finish the HubFlow release
-        //$this->finishRelease($version);
-        // git hf release finish $version
+        $this->finishRelease($version);
 
         // Share output with the user
         $this->outputResult($output, $initial_version);
@@ -127,6 +124,42 @@ class ReleaseCommand extends Command
     }
 
     /**
+     * Commit the change to the "package.json".
+     *
+     * @param  string $version
+     * @return void
+     */
+    protected function commitChange($version)
+    {
+        $process = new Process("git add package.json");
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+
+        $process = new Process("git commit -m \"Version $version\"");
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+    }
+
+    /**
+     * Finish the HubFlow release.
+     *
+     * @param  string $version
+     * @return void
+     */
+    protected function finishRelease($version)
+    {
+        $process = new Process("git hf release finish $version");
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+    }
+
+    /**
      * Output result to the user.
      *
      * @param  \Symfony\Component\Console\Output\OutputInterface  $output
@@ -135,7 +168,7 @@ class ReleaseCommand extends Command
      */
     protected function outputResult($output, $initial_version)
     {
-        $message = ($this->packageJson->name()) ? 'Updating <info>' . $this->packageJson->name() . '</info>.' : '<info>Updating application.</info>';
+        $message = ($this->packageJson->name()) ? '<info>' . $this->packageJson->name() . '</info> updated.' : '<info>Application updated.</info>';
         $message .= ' (<comment>v' . $initial_version . '</comment> => <comment>v' . $this->packageJson->version() . '</comment>)';
         $output->writeln("\n" . $message . "\n");
     }
