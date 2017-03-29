@@ -77,10 +77,12 @@ class ReleaseCommand extends Command
         $this->packageJson->saveVersion($version);
 
         // Commit the change
+        //$this->commitChange($version);
         // git add package.json
         // git commit -m "Version $version"
 
         // Finish the HubFlow release
+        //$this->finishRelease($version);
         // git hf release finish $version
 
         // Share output with the user
