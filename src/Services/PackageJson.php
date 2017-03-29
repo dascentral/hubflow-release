@@ -1,6 +1,6 @@
 <?php
 
-namespace Dascentral\Rl\Console;
+namespace Dascentral\Rl\Console\Services;
 
 class PackageJson
 {

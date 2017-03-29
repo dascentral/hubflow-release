@@ -8,6 +8,7 @@ if (file_exists(__DIR__.'/../../autoload.php')) {
 }
 
 $app = new Symfony\Component\Console\Application('rl', '0.0.1');
+$app->add(new Dascentral\Rl\Console\AppCommand);
 $app->add(new Dascentral\Rl\Console\BumpCommand);
 
 $app->run();
