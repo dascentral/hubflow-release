@@ -1,8 +1,8 @@
 <?php
 
-namespace Dascentral\Bump\Console;
+namespace Dascentral\Rl\Console;
 
-use Dascentral\Bump\Console\PackageJson;
+use Dascentral\Rl\Console\PackageJson;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -11,12 +11,12 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
-class VersionCommand extends Command
+class BumpCommand extends Command
 {
     /**
      * The parsed contents of the "package.json" from the current directory.
      *
-     * @var Dascentral\Bump\Console\PackageJson
+     * @var Dascentral\Rl\Console\PackageJson
      */
     protected $packageJson;
 
@@ -38,7 +38,7 @@ class VersionCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('version')
+        $this->setName('bump')
              ->setDescription('Bump the version of package.json.')
              ->addArgument('type', InputArgument::OPTIONAL);
     }
@@ -60,7 +60,7 @@ class VersionCommand extends Command
             exit(1);
         }
 
-        // We track the current version for script output
+        // Track the current version for script output
         if (!$initial_version = $this->packageJson->version()) {
             $output->writeln("\n" . '<error>No version information found within the package.json.</error>' . "\n");
             exit(1);
