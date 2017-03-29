@@ -1,6 +1,6 @@
 <?php
 
-namespace Dascentral\Rl\Console\Services;
+namespace Dascentral\HubFlowRelease\Console\Services;
 
 class VersionManager
 {

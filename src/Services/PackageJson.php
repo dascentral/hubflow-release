@@ -1,6 +1,6 @@
 <?php
 
-namespace Dascentral\Rl\Console\Services;
+namespace Dascentral\HubFlowRelease\Console\Services;
 
 class PackageJson
 {
@@ -56,6 +56,18 @@ class PackageJson
     public function version()
     {
         return isset($this->packageJson->version) ? $this->packageJson->version : null;
+    }
+
+    /**
+     * Save a new "package.json" with the provided version.
+     *
+     * @param  string $version
+     * @return void
+     */
+    public function saveVersion($version)
+    {
+        $this->packageJson->version = $version;
+        $this->save();
     }
 
     /**

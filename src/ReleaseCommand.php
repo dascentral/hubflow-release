@@ -1,30 +1,31 @@
 <?php
 
-namespace Dascentral\Rl\Console;
+namespace Dascentral\HubFlowRelease\Console;
 
-use Dascentral\Rl\Console\Services\PackageJson;
-use Dascentral\Rl\Console\Services\VersionManager;
+use Dascentral\HubFlowRelease\Console\Services\PackageJson;
+use Dascentral\HubFlowRelease\Console\Services\VersionManager;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
-class AppCommand extends Command
+class ReleaseCommand extends Command
 {
     /**
      * The parsed contents of the "package.json" from the current directory.
      *
-     * @var Dascentral\Rl\Console\Services\PackageJson
+     * @var Dascentral\HubFlowRelease\Console\Services\PackageJson
      */
     protected $packageJson;
 
     /**
      * A class capable of managing versions.
      *
-     * @var Dascentral\Rl\Console\Services\VersionManager
+     * @var Dascentral\HubFlowRelease\Console\Services\VersionManager
      */
     protected $versionManager;
 
@@ -47,7 +48,7 @@ class AppCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('app')
+        $this->setName('release')
              ->setDescription('Perform a full app release via HubFlow.')
              ->addArgument('type', InputArgument::OPTIONAL);
     }
@@ -68,11 +69,9 @@ class AppCommand extends Command
 
         // Determine the next version
         $version = $this->versionManager->bump($initial_version, $type);
-echo "$version\n";
-die();
 
         // Start the HubFlow release
-        // git hf release start $version
+        //$this->startRelease($version);
 
         // Save the new application version
         $this->packageJson->saveVersion($version);
@@ -108,6 +107,21 @@ die();
         }
 
         return $initial_version;
+    }
+
+    /**
+     * Begin the HubFlow release.
+     *
+     * @param  string $version
+     * @return void
+     */
+    protected function startRelease($version)
+    {
+        $process = new Process("git hf release start $version");
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
     }
 
     /**
