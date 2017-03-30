@@ -79,11 +79,15 @@ class ReleaseCommand extends Command
         // Commit the change
         $this->commitChange($version, $output);
 
-        // Finish the HubFlow release
-        $this->finishRelease($version, $output);
+        // Finish the HubFlow release - Need to determine how to provide interactivity with the user
+        //$this->finishRelease($version, $output);
 
         // Share output with the user
         $this->outputResult($initial_version, $output);
+
+        // Ugh, incomplete workflow
+        $output->writeln('You will need to run the following to complete the release...' . "\n");
+        $output->writeln('<comment>git hf release finish ' . $version . '</comment>' . "\n");
     }
 
     /**
