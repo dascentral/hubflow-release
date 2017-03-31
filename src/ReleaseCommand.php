@@ -122,7 +122,7 @@ class ReleaseCommand extends Command
     protected function startRelease($version, $output)
     {
         if ($output->isVerbose()) {
-            $output->writeln("\n" . '<comment>Starting the release</comment>');
+            $output->writeln("\n" . '<comment>Starting release ' . $version . '</comment>' . "\n");
         }
 
         $process = new Process("git hf release start $version");
