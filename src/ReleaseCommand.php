@@ -49,7 +49,7 @@ class ReleaseCommand extends Command
     protected function configure()
     {
         $this->setName('release')
-             ->setDescription('Perform a full app release via HubFlow.')
+             ->setDescription('Start the application release process via HubFlow.')
              ->addArgument('type', InputArgument::OPTIONAL);
     }
 
@@ -79,14 +79,12 @@ class ReleaseCommand extends Command
         // Commit the change
         $this->commitChange($version, $output);
 
-        // Finish the HubFlow release - Need to determine how to provide interactivity with the user
-        //$this->finishRelease($version, $output);
-
         // Share output with the user
         $this->outputResult($initial_version, $output);
 
-        // Ugh, incomplete workflow
-        $output->writeln('You will need to run the following to complete the release...' . "\n");
+        // Provide instruction for completing the release
+        $output->writeln('You may now make any additional changes within your release branch.' . "\n");
+        $output->writeln('Run the following command to complete the release...' . "\n");
         $output->writeln('<comment>git hf release finish ' . $version . '</comment>' . "\n");
     }
 
@@ -152,26 +150,6 @@ class ReleaseCommand extends Command
         }
 
         $process = new Process("git commit -m \"Version $version\"");
-        $process->run();
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
-    }
-
-    /**
-     * Finish the HubFlow release.
-     *
-     * @param  string $version
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
-     * @return void
-     */
-    protected function finishRelease($version, $output)
-    {
-        if ($output->isVerbose()) {
-            $output->writeln('<comment>Finishing the release</comment>');
-        }
-
-        $process = new Process("git hf release finish $version");
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
