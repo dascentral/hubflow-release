@@ -1,3 +1,12 @@
-.DS_Store
-package.*
+### Folders
+/.idea
+/.sass-cache
+/.vagrant
+/.vscode
+/node_modules
 /vendor
+
+### Files
+.DS_Store
+npm-debug.log
+yarn-error.log
