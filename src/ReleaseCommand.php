@@ -4,11 +4,9 @@ namespace Dascentral\HubFlowRelease\Console;
 
 use Dascentral\HubFlowRelease\Console\Services\PackageJson;
 use Dascentral\HubFlowRelease\Console\Services\VersionManager;
-use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -50,7 +48,7 @@ class ReleaseCommand extends Command
     {
         $this->setName('release')
              ->setDescription('Start the application release process via HubFlow.')
-             ->addArgument('type', InputArgument::OPTIONAL);
+             ->addArgument('type', InputArgument::OPTIONAL, 'The type of release to perform. (i.e. "patch", "minor", "major") "patch" is assumed by default.');
     }
 
     /**
@@ -143,7 +141,7 @@ class ReleaseCommand extends Command
             $output->writeln('<comment>Committing the new "package.json"</comment>');
         }
 
-        $process = new Process("git add package.json");
+        $process = new Process('git add package.json');
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
