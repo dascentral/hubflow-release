@@ -35,8 +35,6 @@ class ReleaseCommand extends Command
     public function __construct()
     {
         parent::__construct();
-        $this->inputInterface = new InputInterface();
-        $this->outputInterface = new OutputInterface();
         $this->packageJson = new PackageJson();
         $this->versionManager = new VersionManager();
     }
@@ -56,11 +54,16 @@ class ReleaseCommand extends Command
     /**
      * Execute the command.
      *
+     * @param  \Symfony\Component\Console\Input\InputInterface  $input
+     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
-    protected function execute()
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $type = ($this->input->getArgument('type')) ? strtolower($this->input->getArgument('type')) : 'patch';
+        $this->input = $input;
+        $this->output = $output;
+
+        $type = ($input->getArgument('type')) ? strtolower($input->getArgument('type')) : 'patch';
 
         // Get the current application version
         $initial_version = $this->getCurrentVersion();
