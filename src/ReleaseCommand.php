@@ -46,9 +46,9 @@ class ReleaseCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('release')
-             ->setDescription('Start the application release process via HubFlow.')
-             ->addArgument('type', InputArgument::OPTIONAL, 'The type of release to perform. (i.e. "patch", "minor", "major") "patch" is assumed by default.');
+        $this->setName('release');
+        $this->setDescription('Start the application release process via HubFlow');
+        $this->addArgument('type', InputArgument::OPTIONAL, 'The type of release to perform. (i.e. "patch", "minor", "major") "patch" is assumed by default.');
     }
 
     /**
