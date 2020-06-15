@@ -48,7 +48,7 @@ class ReleaseCommand extends Command
     {
         $this->setName('release');
         $this->setDescription('Start the application release process via HubFlow');
-        $this->addArgument('type', InputArgument::OPTIONAL, 'The type of release to perform. (i.e. "patch", "minor", "major") "patch" is assumed by default.');
+        $this->addArgument('type', InputArgument::REQUIRED, 'The type of release to perform. (i.e. "patch", "minor", "major")');
     }
 
     /**
@@ -63,7 +63,7 @@ class ReleaseCommand extends Command
         $this->input = $input;
         $this->output = $output;
 
-        $type = ($input->getArgument('type')) ? strtolower($input->getArgument('type')) : 'patch';
+        $type = strtolower($input->getArgument('type'));
 
         // Get the current application version
         $initial_version = $this->getCurrentVersion();
