@@ -46,9 +46,9 @@ class ReleaseCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('release')
-             ->setDescription('Start the application release process via HubFlow.')
-             ->addArgument('type', InputArgument::OPTIONAL, 'The type of release to perform. (i.e. "patch", "minor", "major") "patch" is assumed by default.');
+        $this->setName('release');
+        $this->setDescription('Start the application release process via HubFlow');
+        $this->addArgument('type', InputArgument::REQUIRED, 'The type of release to perform. (i.e. "patch", "minor", "major")');
     }
 
     /**
@@ -60,7 +60,10 @@ class ReleaseCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $type = ($input->getArgument('type')) ? strtolower($input->getArgument('type')) : 'patch';
+        $this->input = $input;
+        $this->output = $output;
+
+        $type = strtolower($input->getArgument('type'));
 
         // Get the current application version
         $initial_version = $this->getCurrentVersion();
@@ -69,21 +72,21 @@ class ReleaseCommand extends Command
         $version = $this->versionManager->bump($initial_version, $type);
 
         // Start the HubFlow release
-        $this->startRelease($version, $output);
+        $this->startRelease($version);
 
         // Save the new application version
         $this->packageJson->saveVersion($version);
 
         // Commit the change
-        $this->commitChange($version, $output);
+        $this->commitChange($version);
 
         // Share output with the user
-        $this->outputResult($initial_version, $output);
+        $this->outputResult($initial_version);
 
         // Provide instruction for completing the release
-        $output->writeln('You may now make any additional changes within your release branch.' . "\n");
-        $output->writeln('Run the following command to complete the release...' . "\n");
-        $output->writeln('<comment>git hf release finish ' . $version . '</comment>' . "\n");
+        $this->output->writeln('You may now make any additional changes within your release branch.' . "\n");
+        $this->output->writeln('Run the following command to complete the release...' . "\n");
+        $this->output->writeln('<comment>git hf release finish ' . $version . '</comment>' . "\n");
     }
 
     /**
@@ -95,13 +98,13 @@ class ReleaseCommand extends Command
     {
         // Confirm that the "package.json" file exists
         if (!$this->packageJson->contents()) {
-            $output->writeln("\n" . '<error>No package.json in current directory.</error>' . "\n");
+            $this->output->writeln("\n" . '<error>No package.json in current directory.</error>' . "\n");
             exit(1);
         }
 
         // Confirm version information exists within the "package.json"
         if (!$initial_version = $this->packageJson->version()) {
-            $output->writeln("\n" . '<error>No version information found within the package.json.</error>' . "\n");
+            $this->output->writeln("\n" . '<error>No version information found within the package.json.</error>' . "\n");
             exit(1);
         }
 
@@ -112,13 +115,12 @@ class ReleaseCommand extends Command
      * Begin the HubFlow release.
      *
      * @param  string $version
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
-    protected function startRelease($version, $output)
+    protected function startRelease($version)
     {
-        if ($output->isVerbose()) {
-            $output->writeln("\n" . '<comment>Starting release ' . $version . '</comment>' . "\n");
+        if ($this->output->isVerbose()) {
+            $this->output->writeln("\n" . '<comment>Starting release ' . $version . '</comment>' . "\n");
         }
 
         $process = new Process("git hf release start $version");
@@ -132,13 +134,12 @@ class ReleaseCommand extends Command
      * Commit the change to the "package.json".
      *
      * @param  string $version
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
-    protected function commitChange($version, $output)
+    protected function commitChange($version)
     {
-        if ($output->isVerbose()) {
-            $output->writeln('<comment>Committing the new "package.json"</comment>');
+        if ($this->output->isVerbose()) {
+            $this->output->writeln('<comment>Committing the new "package.json"</comment>');
         }
 
         $process = new Process('git add package.json');
@@ -158,13 +159,12 @@ class ReleaseCommand extends Command
      * Output result to the user.
      *
      * @param  string $initial_version
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
-    protected function outputResult($initial_version, $output)
+    protected function outputResult($initial_version)
     {
         $message = ($this->packageJson->name()) ? '<info>' . $this->packageJson->name() . '</info> updated.' : '<info>Application updated.</info>';
         $message .= ' (<comment>v' . $initial_version . '</comment> => <comment>v' . $this->packageJson->version() . '</comment>)';
-        $output->writeln("\n" . $message . "\n");
+        $this->output->writeln("\n" . $message . "\n");
     }
 }
